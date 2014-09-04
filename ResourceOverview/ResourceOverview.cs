@@ -7,11 +7,13 @@ using UnityEngine;
 
 namespace ResourceOverview
 {
-    [KSPAddon(KSPAddon.Startup.EditorAny, false)]
+
+	[KSPAddon(KSPAddon.Startup.EditorAny, false)]
     class ResourceOverview : MonoBehaviour
     {
         private IButton roButton;
         private bool roWindowVisible;
+		private bool roWindowHover;
 		private Rect roWindowPosition;
 		private float roWindowHeight;
 
@@ -22,14 +24,15 @@ namespace ResourceOverview
 		private int vesselCrewCapacity;
 		private int vesselPartCount;
 
+		private ApplicationLauncherButton appLauncherButton = null;
+
         public void Start()
         {
+			LogDebug("start");
             if (ToolbarManager.ToolbarAvailable) 
             {
-
-
                 roButton = ToolbarManager.Instance.add("RO", "ROButton");
-                roButton.TexturePath = "ResourceOverview/button_icon";
+                roButton.TexturePath = "ResourceOverview/ro_toolbar_button";
                 roButton.ToolTip = "Resource Overview Window";
                 roButton.OnClick += (e) =>
                 {
@@ -38,7 +41,8 @@ namespace ResourceOverview
             }
             else
             {
-                roWindowVisible = true;
+				GameEvents.onGUIApplicationLauncherReady.Add(onGUIAppLauncherReady);
+				GameEvents.onGUIApplicationLauncherDestroyed.Add(onGUIAppLauncherDestroyed);
             }
 			
 			
@@ -46,11 +50,84 @@ namespace ResourceOverview
 			GameEvents.onPartRemove.Add(onPartRemove);
         }
 
-        public void Update()
-        {
+		private void onGUIAppLauncherDestroyed()
+		{
+			LogDebug("onGUIAppLauncherDestroyed");
+			if (appLauncherButton != null)
+			{
+				LogDebug("removing app launcher button from onGUIAppLauncherDestroyed");
+				ApplicationLauncher.Instance.RemoveModApplication(appLauncherButton);
+			}
+		}
 
-           
-        }
+
+		private void onGUIAppLauncherReady()
+		{
+			LogDebug("onGUIAppLauncherReady");
+			if (appLauncherButton == null)
+			{
+				LogDebug("onGUIAppLauncherReady adding button");
+				Texture2D btnTexture = new Texture2D(38, 38);
+				btnTexture.LoadImage(System.IO.File.ReadAllBytes("GameData/ResourceOverview/ro_app_button.png"));
+
+				appLauncherButton = ApplicationLauncher.Instance.AddModApplication(
+					onAppLaunchToggleOn, onAppLaunchToggleOff,
+					onAppLaunchHoverOn, onAppLaunchHoverOff,
+					null, null,
+					ApplicationLauncher.AppScenes.SPH | ApplicationLauncher.AppScenes.VAB,
+					(Texture)btnTexture);
+			}
+		}
+
+
+		public void Update()
+		{
+
+
+		}
+
+		void OnDestroy()
+		{
+			LogDebug("destroy");
+
+			GameEvents.onEditorShipModified.Remove(onEditorShipModified);
+			GameEvents.onPartRemove.Remove(onPartRemove);
+			
+			if (ToolbarManager.ToolbarAvailable)
+			{
+				roButton.Destroy();
+			}
+			else
+			{
+				if (appLauncherButton != null)
+				{
+					LogDebug("removing app launcher button from OnDestroy");
+					ApplicationLauncher.Instance.RemoveModApplication(appLauncherButton);
+				}
+				GameEvents.onGUIApplicationLauncherDestroyed.Remove(onGUIAppLauncherDestroyed);
+				GameEvents.onGUIApplicationLauncherReady.Remove(onGUIAppLauncherReady);
+			}
+		}
+
+		private void onAppLaunchHoverOn()
+		{
+			roWindowHover = true;
+		}
+
+		private void onAppLaunchHoverOff()
+		{
+			roWindowHover = false;
+		}
+
+		private void onAppLaunchToggleOff()
+		{
+			roWindowVisible = false;
+		}
+
+		private void onAppLaunchToggleOn()
+		{
+			roWindowVisible = true;
+		}
 
         void OnGUI()
         {
@@ -59,7 +136,7 @@ namespace ResourceOverview
 				// set initial size
 				roWindowPosition = new Rect(Screen.width - 250, 100, 200, 50);
 			}
-			if (roWindowVisible)
+			if (roWindowVisible || roWindowHover)
 			{
 				if (EditorLogic.startPod == null) // nothing to display, show only text
 				{
@@ -162,17 +239,7 @@ namespace ResourceOverview
 			}
 		}
 
-        void OnDestroy()
-        {
-            LogDebug("destroy");
-           
-			GameEvents.onEditorShipModified.Remove(onEditorShipModified);
-			GameEvents.onPartRemove.Remove(onPartRemove);
-            if (ToolbarManager.ToolbarAvailable)
-            {
-                roButton.Destroy();
-            }
-        }
+       
 
 		private void onPartRemove(GameEvents.HostTargetAction<Part, Part> data)
 		{
@@ -209,5 +276,6 @@ namespace ResourceOverview
 		{
 			Debug.Log("ResourceOverview: " + msg);
 		}
-    }
+
+	}
 }
