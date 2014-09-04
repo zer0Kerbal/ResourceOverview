@@ -12,6 +12,10 @@ namespace ResourceOverview
     {
         private IButton roButton;
         private bool roWindowVisible;
+		private Rect roWindowPosition;
+
+		private Dictionary<String, DisplayResource> resourceList = new Dictionary<String, DisplayResource>();
+		private bool resourcesFetched = false;
 
         public void Start()
         {
@@ -31,9 +35,10 @@ namespace ResourceOverview
             {
                 roWindowVisible = true;
             }
-
+			
 			
 			GameEvents.onEditorShipModified.Add(onEditorShipModified);
+			GameEvents.onPartRemove.Add(onPartRemove);
         }
 
         public void Update()
@@ -44,28 +49,39 @@ namespace ResourceOverview
 
         void OnGUI()
         {
-			Log("reslist: " + resourceList.Count);
-            if (roWindowVisible)
-                GUILayout.Window(456123, new Rect(Screen.width - 250, 100, 200, 50+resourceList.Count*20), resourceOverviewWindow, "Resource Overview Window");
+			if (roWindowPosition.x == 0 && roWindowPosition.y == 0)
+			{
+				// set initial size
+				roWindowPosition = new Rect(Screen.width - 250, 100, 200, 50);
+			}
+			if (roWindowVisible)
+			{
+				roWindowPosition = GUILayout.Window(456123, roWindowPosition, resourceOverviewWindow, "Resource Overview Window",
+					GUILayout.Width(200), // overwrite values from roWindowPosition
+					GUILayout.Height(50 + resourceList.Count * 20));
+			}
         }
 
-		private Dictionary<String, double> resourceList = new Dictionary<String, double>();
 		
-		private bool resourcesFetched = false;
 
         private void resourceOverviewWindow(int windowID)
         {
+			GUILayout.BeginVertical();
+			
 			if (EditorLogic.startPod != null) { 
 				getAllResources(EditorLogic.startPod);
-				GUILayout.BeginVertical();
-				GUILayout.Label("Resource Overview", GUILayout.ExpandWidth(true));
 				foreach (String key in resourceList.Keys)
 				{
-					GUILayout.Label(key+": "+resourceList[key], GUILayout.ExpandWidth(true));
+					GUILayout.Label(key + ": " + String.Format("{0:,0.00}", resourceList[key].amount) + " / " + String.Format("{0:,0.00}", resourceList[key].maxAmount), GUILayout.ExpandWidth(true));
 				}
-				GUILayout.EndVertical();
+				
 			}
-            GUI.DragWindow();
+			else
+			{
+				GUILayout.Label("No resources to display!", GUILayout.ExpandWidth(true));
+			}
+			GUILayout.EndVertical();
+			GUI.DragWindow();
         }
 
         private void getAllResources(Part p)
@@ -82,17 +98,18 @@ namespace ResourceOverview
 
 		private void fetchResources(Part p)
 		{
-			Log("getting res for " + p.name);
+			LogDebug("getting res for " + p.name);
 			foreach (PartResource res in p.Resources.list)
 			{
-				Log("Resource: " + res.resourceName + ", Amount: " + res.amount);
+				LogDebug("Resource: " + res.resourceName + ", Amount: " + res.amount);
 				if (resourceList.ContainsKey(res.resourceName))
 				{
-					resourceList[res.resourceName] += res.amount;
+					resourceList[res.resourceName].amount += res.amount;
+					resourceList[res.resourceName].maxAmount += res.maxAmount;
 				}
 				else
 				{
-					resourceList.Add(res.resourceName, res.amount);
+					resourceList.Add(res.resourceName, new DisplayResource(res.resourceName, res.amount, res.maxAmount));
 				}
 			}
 
@@ -104,24 +121,32 @@ namespace ResourceOverview
 
         void OnDestroy()
         {
-            Log("destroy");
+            LogDebug("destroy");
            
 			GameEvents.onEditorShipModified.Remove(onEditorShipModified);
+			GameEvents.onPartRemove.Remove(onPartRemove);
             if (ToolbarManager.ToolbarAvailable)
             {
                 roButton.Destroy();
             }
         }
-		
+
+		private void onPartRemove(GameEvents.HostTargetAction<Part, Part> data)
+		{
+			LogDebug("onPartRemove");
+			setFetchResourceAgain();
+		}
+
+
 		void onEditorShipModified(ShipConstruct sc)
 		{
-			Log("onEditorShipModified");
+			LogDebug("onEditorShipModified");
 			setFetchResourceAgain();
 		}
 
 		private void setFetchResourceAgain()
 		{
-			Log("clearing resources");
+			LogDebug("clearing resources");
 			resourcesFetched = false;
 			if (resourceList.Count() > 0)
 			{
@@ -130,6 +155,11 @@ namespace ResourceOverview
 		}
         // http://wiki.kerbalspaceprogram.com/wiki/API:GameEvents
 
+		[System.Diagnostics.Conditional("DEBUG")]
+		private void LogDebug(String msg)
+		{
+			Debug.Log("ResourceOverview: " + msg);
+		}
 		private void Log(String msg)
 		{
 			Debug.Log("ResourceOverview: " + msg);
