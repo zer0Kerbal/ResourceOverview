@@ -16,7 +16,10 @@ namespace ResourceOverview
 		private float roWindowHeight;
 
 		private Dictionary<String, DisplayResource> resourceList = new Dictionary<String, DisplayResource>();
-		private bool resourcesFetched = false;
+		private bool vesselDataFetched = false;
+		private float vesselTotalMass;
+		private float vesselDryMass;
+		private int vesselCrewCapacity;
 
         public void Start()
         {
@@ -57,13 +60,13 @@ namespace ResourceOverview
 			}
 			if (roWindowVisible)
 			{
-				if (resourceList.Count == 0) // nothing to display, show only text
+				if (EditorLogic.startPod == null) // nothing to display, show only text
 				{
 					roWindowHeight = 50;
 				}
-				else // we got some resources, calculate size
+				else // we got something, calculate size
 				{
-					roWindowHeight = 50 + resourceList.Count * 20;
+					roWindowHeight = 70 + resourceList.Count * 20;
 				}
 				roWindowPosition = GUILayout.Window(456123, roWindowPosition, resourceOverviewWindow, "Resource Overview Window",
 					GUILayout.Width(200), // overwrite values from roWindowPosition
@@ -78,9 +81,12 @@ namespace ResourceOverview
 			GUILayout.BeginVertical();
 
 			if (EditorLogic.startPod != null) {
-				float mass = EditorLogic.SortedShipList.Where(p => p.physicalSignificance == Part.PhysicalSignificance.FULL).Sum(p => p.mass);
-				GUILayout.Label("Total Mass: " + String.Format("{0:,0.00}", mass), GUILayout.ExpandWidth(true));
-				getAllResources(EditorLogic.startPod);
+				
+				GUILayout.Label("Total Mass: " + String.Format("{0:,0.00}", vesselTotalMass), GUILayout.ExpandWidth(true));
+				GUILayout.Label("Dry Mass: " + String.Format("{0:,0.00}", vesselDryMass), GUILayout.ExpandWidth(true));
+				GUILayout.Label("Crew Capacity: " + vesselCrewCapacity, GUILayout.ExpandWidth(true));
+				GUILayout.Space(10);
+				reloadVesselData();
 				foreach (String key in resourceList.Keys)
 				{
 					GUILayout.Label(key + ": " + String.Format("{0:,0.00}", resourceList[key].amount) + " / " + String.Format("{0:,0.00}", resourceList[key].maxAmount), GUILayout.ExpandWidth(true));
@@ -95,16 +101,39 @@ namespace ResourceOverview
 			GUI.DragWindow();
         }
 
-        private void getAllResources(Part p)
+		
+        private void reloadVesselData()
         {
-			if (resourcesFetched)
+			if (vesselDataFetched)
 			{
 				return;
 			}
+			vesselTotalMass = EditorLogic.SortedShipList.Where(p => p.physicalSignificance == Part.PhysicalSignificance.FULL).Sum(p => p.mass + p.GetResourceMass());
+			vesselDryMass = EditorLogic.SortedShipList.Where(p => p.physicalSignificance == Part.PhysicalSignificance.FULL).Sum(p => p.mass);
+			vesselCrewCapacity = EditorLogic.SortedShipList.Sum(p => p.CrewCapacity);
 
-			fetchResources(p);
+			foreach (Part part in EditorLogic.SortedShipList)
+			{
+				LogDebug("getting res for " + part.name);
+				foreach (PartResource res in part.Resources.list)
+				{
+					LogDebug("Resource: " + res.resourceName + ", Amount: " + res.amount);
+					if (resourceList.ContainsKey(res.resourceName))
+					{
+						//res.info.density
+						resourceList[res.resourceName].amount += res.amount;
+						resourceList[res.resourceName].maxAmount += res.maxAmount;
+					}
+					else
+					{
+						resourceList.Add(res.resourceName, new DisplayResource(res.resourceName, res.amount, res.maxAmount));
+					}
+				}
+			}
 
-			resourcesFetched = true;
+			//fetchResources(p);
+
+			vesselDataFetched = true;
         }
 
 		private void fetchResources(Part p)
@@ -145,20 +174,22 @@ namespace ResourceOverview
 		private void onPartRemove(GameEvents.HostTargetAction<Part, Part> data)
 		{
 			LogDebug("onPartRemove");
-			setFetchResourceAgain();
+			setFetchVesselData();
 		}
 
 
 		void onEditorShipModified(ShipConstruct sc)
 		{
 			LogDebug("onEditorShipModified");
-			setFetchResourceAgain();
+			setFetchVesselData();
 		}
 
-		private void setFetchResourceAgain()
+		private void setFetchVesselData()
 		{
-			LogDebug("clearing resources");
-			resourcesFetched = false;
+			LogDebug("vessel data will be refetched");
+			vesselDataFetched = false;
+			vesselTotalMass = 0;
+			vesselCrewCapacity = 0;
 			if (resourceList.Count() > 0)
 			{
 				resourceList.Clear();
