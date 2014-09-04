@@ -13,6 +13,7 @@ namespace ResourceOverview
         private IButton roButton;
         private bool roWindowVisible;
 		private Rect roWindowPosition;
+		private float roWindowHeight;
 
 		private Dictionary<String, DisplayResource> resourceList = new Dictionary<String, DisplayResource>();
 		private bool resourcesFetched = false;
@@ -56,9 +57,17 @@ namespace ResourceOverview
 			}
 			if (roWindowVisible)
 			{
+				if (resourceList.Count == 0) // nothing to display, show only text
+				{
+					roWindowHeight = 50;
+				}
+				else // we got some resources, calculate size
+				{
+					roWindowHeight = 50 + resourceList.Count * 20;
+				}
 				roWindowPosition = GUILayout.Window(456123, roWindowPosition, resourceOverviewWindow, "Resource Overview Window",
 					GUILayout.Width(200), // overwrite values from roWindowPosition
-					GUILayout.Height(50 + resourceList.Count * 20));
+					GUILayout.Height(roWindowHeight));
 			}
         }
 
@@ -67,8 +76,10 @@ namespace ResourceOverview
         private void resourceOverviewWindow(int windowID)
         {
 			GUILayout.BeginVertical();
-			
-			if (EditorLogic.startPod != null) { 
+
+			if (EditorLogic.startPod != null) {
+				float mass = EditorLogic.SortedShipList.Where(p => p.physicalSignificance == Part.PhysicalSignificance.FULL).Sum(p => p.mass);
+				GUILayout.Label("Total Mass: " + String.Format("{0:,0.00}", mass), GUILayout.ExpandWidth(true));
 				getAllResources(EditorLogic.startPod);
 				foreach (String key in resourceList.Keys)
 				{
@@ -76,7 +87,7 @@ namespace ResourceOverview
 				}
 				
 			}
-			else
+			if (resourceList.Count == 0)
 			{
 				GUILayout.Label("No resources to display!", GUILayout.ExpandWidth(true));
 			}
