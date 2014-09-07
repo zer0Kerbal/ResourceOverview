@@ -29,7 +29,7 @@ namespace ResourceOverview
             if (ToolbarManager.ToolbarAvailable) 
             {
                 roButton = ToolbarManager.Instance.add("RO", "ROButton");
-                roButton.TexturePath = "ResourceOverview/ro_toolbar_button";
+                roButton.TexturePath = "ResourceOverview/icons/ro_toolbar_button";
                 roButton.ToolTip = "Resource Overview Window";
                 roButton.OnClick += (e) =>
                 {
@@ -64,7 +64,7 @@ namespace ResourceOverview
 			{
 				LogDebug("onGUIAppLauncherReady adding button");
 				Texture2D btnTexture = new Texture2D(38, 38);
-				btnTexture.LoadImage(System.IO.File.ReadAllBytes("GameData/ResourceOverview/ro_app_button.png"));
+				btnTexture.LoadImage(System.IO.File.ReadAllBytes("GameData/ResourceOverview/icons/ro_app_button.png"));
 
 				appLauncherButton = ApplicationLauncher.Instance.AddModApplication(
 					onAppLaunchToggleOn, onAppLaunchToggleOff,
