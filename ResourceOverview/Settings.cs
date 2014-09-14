@@ -22,45 +22,37 @@ namespace ResourceOverview
 
 		public  void load()
 		{
-			Debug.Log("ResourceOverview: loading settings for "+prefix);
 			cfg.load();
 		}
 
 		public  void save()
 		{
 			cfg.save();
-			Debug.Log("ResourceOverview: saving settings for " +prefix);
 		}
 
 		public  object get(string name, object def)
 		{
-			Debug.Log("ResourceOverview: get object: " + prefix + "_" + name);
-			return cfg.GetValue<object>(prefix+"_"+name, def);
+			return cfg.GetValue<object>(prefix+"."+name, def);
 		}
 
 		public  string get(string name, string def)
 		{
-			Debug.Log("ResourceOverview: get string: " + prefix + "_" + name);
-			return cfg.GetValue<string>(prefix + "_" + name, def);
+			return cfg.GetValue<string>(prefix + "." + name, def);
 		}
 
 		public  int get(string name, int def)
 		{
-			Debug.Log("ResourceOverview: get int: " + prefix + "_" + name);
-			return cfg.GetValue<int>(prefix + "_" + name, def);
+			return cfg.GetValue<int>(prefix + "." + name, def);
 		}
 
 		public  float get(string name, float def)
 		{
-			Debug.Log("ResourceOverview: get float: " + prefix + "_" + name);
-			return cfg.GetValue<float>(prefix + "_" + name, def);
+			return cfg.GetValue<float>(prefix + "." + name, def);
 		}
 
 		public  void set(string name, object val)
 		{
-			cfg.SetValue(prefix + "_" + name, val);
-			Debug.Log(String.Format("ResourceOverview: setting {0}: {1} ({2})", prefix + "_" + name, val, val.GetType()));
-			save();
+			cfg.SetValue(prefix + "." + name, val);
 		}
 		
 	}

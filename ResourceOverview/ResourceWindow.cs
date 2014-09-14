@@ -31,8 +31,8 @@ namespace ResourceOverview
 			GameEvents.onEditorShipModified.Add(onEditorShipModified);
 			GameEvents.onPartRemove.Add(onPartRemove);
 			
-			windowPosition.x = settings.get("x", Screen.width / 2 - windowWidth / 2);
-			windowPosition.y = settings.get("y", Screen.height / 2 - windowHeight / 2);
+			windowPosition.x = settings.get("x", (int)(Screen.width / 2 - windowWidth / 2));
+			windowPosition.y = settings.get("y", (int)(Screen.height / 2 - windowHeight / 2));
 		}
 
 		private void onPartRemove(GameEvents.HostTargetAction<Part, Part> data)
@@ -138,9 +138,9 @@ namespace ResourceOverview
 
 			GameEvents.onEditorShipModified.Remove(onEditorShipModified);
 			GameEvents.onPartRemove.Remove(onPartRemove);
-
-			settings.set("x", windowPosition.x);
-			settings.set("y", windowPosition.y);
+			
+			settings.set("x", (int)windowPosition.x);
+			settings.set("y", (int)windowPosition.y);
 			settings.save();
 		}
 	}
