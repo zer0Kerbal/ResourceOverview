@@ -16,6 +16,8 @@ namespace ResourceOverview
 		private int vesselCrewCapacity;
 		private int vesselPartCount;
 
+		protected Settings settings;
+
 		public ResourceWindow(): base("Resource Overview Window", 200, 50)
 		{
 
@@ -24,9 +26,13 @@ namespace ResourceOverview
 		public void Start()
 		{
 			LogDebug("window start");
-			
+			settings = new Settings("ResourceWindow");
+			settings.load();
 			GameEvents.onEditorShipModified.Add(onEditorShipModified);
 			GameEvents.onPartRemove.Add(onPartRemove);
+			
+			windowPosition.x = settings.get("x", Screen.width / 2 - windowWidth / 2);
+			windowPosition.y = settings.get("y", Screen.height / 2 - windowHeight / 2);
 		}
 
 		private void onPartRemove(GameEvents.HostTargetAction<Part, Part> data)
@@ -67,10 +73,8 @@ namespace ResourceOverview
 
 			foreach (Part part in EditorLogic.SortedShipList)
 			{
-				LogDebug("getting res for " + part.name);
 				foreach (PartResource res in part.Resources.list)
 				{
-					LogDebug("Resource: " + res.resourceName + ", Amount: " + res.amount);
 					if (resourceList.ContainsKey(res.resourceName))
 					{
 						//res.info.density
@@ -134,6 +138,10 @@ namespace ResourceOverview
 
 			GameEvents.onEditorShipModified.Remove(onEditorShipModified);
 			GameEvents.onPartRemove.Remove(onPartRemove);
+
+			settings.set("x", windowPosition.x);
+			settings.set("y", windowPosition.y);
+			settings.save();
 		}
 	}
 }
