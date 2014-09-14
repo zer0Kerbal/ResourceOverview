@@ -76,7 +76,8 @@
   	</PostBuildEventDependsOn>
     <PostBuildEvent>rem Set the Variables we need
 set GamePath="C:\Games\Kerbal Space Program dev"
-set ReleasePath=F:\philip\development\KSP\plugins\00_releases\$(ProjectName)
+set ReleaseDir=F:\philip\development\KSP\plugins\00_releases
+set ReleasePath=%25ReleaseDir%25\$(ProjectName)\$(ProjectName)_@(VersionNumber)
 set DebugPath="%25GamePath%25\GameData\$(ProjectName)"
 set Binary="%25GamePath%25\KSP.exe"
 set ZipScript="F:\philip\development\zip.vbs"
@@ -96,21 +97,21 @@ goto END
 
 :RELEASECONFIG
 echo release config
-rem create zip file
-mkdir %25ReleasePath%25\@(VersionNumber)
-echo copying "$(TargetPath)" %25ReleasePath%25\@(VersionNumber)\
-copy "$(TargetPath)" %25ReleasePath%25\@(VersionNumber)\
+rmdir /Q /S %25ReleasePath%25
+mkdir %25ReleasePath%25
+echo copying "$(TargetPath)" %25ReleasePath%25\
+copy "$(TargetPath)" %25ReleasePath%25\
 
-mkdir %25ReleasePath%25\@(VersionNumber)\icons
-echo copying "$(SolutionDir)icons" %25ReleasePath%25\@(VersionNumber)\icons
-copy "$(SolutionDir)icons" %25ReleasePath%25\@(VersionNumber)\icons
+mkdir %25ReleasePath%25\icons
+echo copying "$(SolutionDir)icons" %25ReleasePath%25\icons
+copy "$(SolutionDir)icons" %25ReleasePath%25\icons
 
-echo copying "$(SolutionDir)LICENSE" %25ReleasePath%25\@(VersionNumber)
-copy "$(SolutionDir)LICENSE" %25ReleasePath%25\@(VersionNumber)
+echo copying "$(SolutionDir)LICENSE" %25ReleasePath%25\
+copy "$(SolutionDir)LICENSE" %25ReleasePath%25\
 
 
-echo creating zip  "%25ReleasePath%25\$(ProjectName)-@(VersionNumber).zip"
-CScript "%25ZipScript%25" "%25ReleasePath%25\@(VersionNumber)"  "%25ReleasePath%25\$(ProjectName)-@(VersionNumber).zip"
+echo creating zip  "%25ReleaseDir%25\$(ProjectName)-@(VersionNumber).zip"
+CScript "%25ZipScript%25" "%25ReleasePath%25"  "%25ReleaseDir%25\$(ProjectName)-@(VersionNumber).zip"
 goto END
 
 :END
