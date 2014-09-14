@@ -12,8 +12,7 @@ namespace ResourceOverview
     class ResourceOverview : PluginBase
     {
         private IButton roButton;
-        private bool roWindowVisible;
-		private bool roWindowHover;
+       
 		
 
 		private ApplicationLauncherButton appLauncherButton = null;
@@ -28,6 +27,7 @@ namespace ResourceOverview
 			
             if (ToolbarManager.ToolbarAvailable) 
             {
+				LogDebug("add toolbar button");
                 roButton = ToolbarManager.Instance.add("RO", "ROButton");
                 roButton.TexturePath = "ResourceOverview/icons/ro_toolbar_button";
                 roButton.ToolTip = "Resource Overview Window";
@@ -52,7 +52,7 @@ namespace ResourceOverview
 			if (appLauncherButton != null)
 			{
 				LogDebug("removing app launcher button from onGUIAppLauncherDestroyed");
-				ApplicationLauncher.Instance.RemoveModApplication(appLauncherButton);
+				ApplicationLauncher.Instance.RemoveModApplication(appLauncherButton); 
 			}
 		}
 
@@ -78,8 +78,6 @@ namespace ResourceOverview
 
 		public void Update()
 		{
-			// TODO: add hover to window?
-			roWindow.windowVisible = roWindowVisible || roWindowHover;
 
 		}
 
@@ -105,24 +103,23 @@ namespace ResourceOverview
 
 		private void onAppLaunchHoverOn()
 		{
-			roWindowHover = true;
+			roWindow.windowHover = true;
 		}
 
 		private void onAppLaunchHoverOff()
 		{
-			roWindowHover = false;
-		}
-
-		private void onAppLaunchToggleOff()
-		{
-			roWindowVisible = false;
+			roWindow.windowHover = false;
 		}
 
 		private void onAppLaunchToggleOn()
 		{
-			roWindowVisible = true;
+			roWindow.windowVisible = true;
 		}
 
+		private void onAppLaunchToggleOff()
+		{
+			roWindow.windowVisible = false;
+		}
 
 	}
 }

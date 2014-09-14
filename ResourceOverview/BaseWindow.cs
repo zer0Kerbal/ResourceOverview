@@ -9,25 +9,50 @@ namespace ResourceOverview
 	abstract class BaseWindow : PluginBase
 	{
 		protected string windowTitle;
-		private bool _windowVisible;
+		protected bool addedToDrawQueue;
+
+		protected bool _windowVisible;
 		public bool windowVisible
 			{
 				get { return _windowVisible; }
 				set {
-					if (_windowVisible != value) // value will be changed
-					{
-						if (value)
-						{
-							RenderingManager.AddToPostDrawQueue(5, this.drawWindow);
-						}
-						else
-						{
-							RenderingManager.RemoveFromPostDrawQueue(5, this.drawWindow);
-						}
-					}
 					_windowVisible = value;
+					doQueueAdd(value);
 				}
 			}
+
+		protected bool _windowHover;
+		public bool windowHover
+		{
+			get { return _windowHover; }
+			set
+			{
+				_windowHover = value;
+				doQueueAdd(value);
+			}
+		}
+
+		protected void doQueueAdd(bool newval) {
+			if (newval)
+			{
+				if (!addedToDrawQueue)
+				{
+					RenderingManager.AddToPostDrawQueue(1, this.drawWindow);
+					LogDebug("adding to draw queue");
+					addedToDrawQueue = true;
+				}
+				
+			}
+			else
+			{
+				if (addedToDrawQueue && !_windowVisible)
+				{
+					RenderingManager.RemoveFromPostDrawQueue(1, this.drawWindow);
+					LogDebug("removing from draw queue");
+					addedToDrawQueue = false;
+				}
+			}
+		}
 
 		protected Rect windowPosition;
 		protected float windowHeight;
@@ -59,7 +84,7 @@ namespace ResourceOverview
 				// set initial size and position
 				windowPosition = new Rect(Screen.width / 2 - windowWidth / 2, Screen.height / 2 - windowHeight / 2, windowWidth, windowHeight);
 			}
-			if (windowVisible)
+			if (windowVisible || windowHover)
 			{
 				windowPosition = GUILayout.Window(456123, windowPosition, drawGui, windowTitle,
 					GUILayout.Width(windowWidth), // overwrite values from windowPosition

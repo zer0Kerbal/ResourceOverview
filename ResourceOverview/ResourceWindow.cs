@@ -18,7 +18,6 @@ namespace ResourceOverview
 
 		public ResourceWindow(): base("Resource Overview Window", 200, 50)
 		{
-			
 
 		}
 

@@ -82,12 +82,12 @@ set Binary="%25GamePath%25\KSP.exe"
 set ZipScript="F:\philip\development\zip.vbs"
 
 
-echo Path: %25ReleasePath%25\@(VersionNumber)
 
 if $(ConfigurationName)==Debug goto DEBUGCONFIG
 if $(ConfigurationName)==Release goto RELEASECONFIG
 
 :DEBUGCONFIG
+echo debug config
 rem Copy DLL and run KSP
 copy "$(TargetPath)" "%25DebugPath%25"
 rem and then run the game
@@ -95,6 +95,7 @@ rem "%25Binary%25"
 goto END
 
 :RELEASECONFIG
+echo release config
 rem create zip file
 mkdir %25ReleasePath%25\@(VersionNumber)
 echo copying "$(TargetPath)" %25ReleasePath%25\@(VersionNumber)\
