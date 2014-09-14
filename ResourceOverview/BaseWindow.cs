@@ -8,9 +8,15 @@ namespace ResourceOverview
 {
 	abstract class BaseWindow : PluginBase
 	{
+		protected int windowID;
 		protected string windowTitle;
-		protected bool addedToDrawQueue;
 
+		protected Rect windowPosition;
+		protected float windowHeight;
+		protected float windowWidth;
+
+		protected bool addedToDrawQueue;
+		
 		protected bool _windowVisible;
 		public bool windowVisible
 			{
@@ -38,7 +44,7 @@ namespace ResourceOverview
 				if (!addedToDrawQueue)
 				{
 					RenderingManager.AddToPostDrawQueue(1, this.drawWindow);
-					LogDebug("adding to draw queue");
+					LogDebug("adding " +windowTitle +" to draw queue");
 					addedToDrawQueue = true;
 				}
 				
@@ -48,33 +54,22 @@ namespace ResourceOverview
 				if (addedToDrawQueue && !_windowVisible)
 				{
 					RenderingManager.RemoveFromPostDrawQueue(1, this.drawWindow);
-					LogDebug("removing from draw queue");
+					LogDebug("removing " + windowTitle + " from draw queue");
 					addedToDrawQueue = false;
 				}
 			}
 		}
-
-		protected Rect windowPosition;
-		protected float windowHeight;
-		protected float windowWidth;
 
 		public BaseWindow(string title, float width, float height)
 		{
 			windowTitle = title;
 			windowWidth = width;
 			windowHeight = height;
+			windowID = UnityEngine.Random.Range(1000, 2000000) + System.Reflection.Assembly.GetExecutingAssembly().GetName().Name.GetHashCode(); // generate window ID
+			LogDebug("BaseWindow constructor for "+title);
+
 		}
 
-		/*
-		 * TODO: drag enabled, drawWindow/drawWindowInternal
-		 * 
-        //Are we allowing window drag
-        if (DragEnabled)
-            if (DragRect.height == 0 && DragRect.width == 0)
-                GUI.DragWindow();
-            else
-                GUI.DragWindow(DragRect);
-		 */
 
 		protected void drawWindow()
 		{
@@ -86,7 +81,7 @@ namespace ResourceOverview
 			}
 			if (windowVisible || windowHover)
 			{
-				windowPosition = GUILayout.Window(456123, windowPosition, drawGui, windowTitle,
+				windowPosition = GUILayout.Window(windowID, windowPosition, drawGui, windowTitle,
 					GUILayout.Width(windowWidth), // overwrite values from windowPosition
 					GUILayout.Height(windowHeight));
 			}
@@ -95,5 +90,6 @@ namespace ResourceOverview
 
 		protected abstract void preDrawGui();
 		protected abstract void drawGui(int windowID);
+
 	}
 }

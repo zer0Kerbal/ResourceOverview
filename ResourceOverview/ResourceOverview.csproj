@@ -59,6 +59,7 @@
     <Compile Include="ResourceOverview.cs" />
     <Compile Include="ResourceWindow.cs" />
     <Compile Include="Settings.cs" />
+    <Compile Include="SettingsWindow.cs" />
     <Compile Include="ToolbarWrapper.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

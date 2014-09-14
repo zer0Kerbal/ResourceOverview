@@ -18,7 +18,9 @@ namespace ResourceOverview
 
 		protected Settings settings;
 
-		public ResourceWindow(): base("Resource Overview Window", 200, 50)
+		protected SettingsWindow settingsWindow;
+
+		public ResourceWindow(): base("Resource Overview", 250, 50)
 		{
 
 		}
@@ -26,13 +28,27 @@ namespace ResourceOverview
 		public void Start()
 		{
 			LogDebug("window start");
-			settings = new Settings("ResourceWindow");
+
+			settings = new Settings("ResourceOverview");
 			settings.load();
+			
+
+			settingsWindow = gameObject.AddComponent<SettingsWindow>();
+			// FIXME: a little hack, change settings to single instance/static
+			settingsWindow.settings.SettingsChanged += new Settings.SettingsChangedEventHandler(onSettingsChanged);
+
+
 			GameEvents.onEditorShipModified.Add(onEditorShipModified);
 			GameEvents.onPartRemove.Add(onPartRemove);
-			
-			windowPosition.x = settings.get("x", (int)(Screen.width / 2 - windowWidth / 2));
-			windowPosition.y = settings.get("y", (int)(Screen.height / 2 - windowHeight / 2));
+
+			windowPosition.x = settings.get("ResourceWindow.x", (int)(Screen.width / 2 - windowWidth / 2));
+			windowPosition.y = settings.get("ResourceWindow.y", (int)(Screen.height / 2 - windowHeight / 2));
+		}
+
+		public void onSettingsChanged()
+		{
+			settings.load();
+			LogDebug("onSettingsChanged");
 		}
 
 		private void onPartRemove(GameEvents.HostTargetAction<Part, Part> data)
@@ -107,15 +123,20 @@ namespace ResourceOverview
 
 		protected override void drawGui(int windowID)
 		{
+			if (GUI.Button(new Rect(windowPosition.width - 22, 2, 20, 20), "s"))
+			{
+				settingsWindow.windowVisible = true;
+			}
+			
 			GUILayout.BeginVertical();
 
 			if (EditorLogic.startPod != null)
 			{
 				reloadVesselData();
-				GUILayout.Label("Total Mass: " + String.Format("{0:,0.00}", vesselTotalMass), GUILayout.ExpandWidth(true));
-				GUILayout.Label("Dry Mass: " + String.Format("{0:,0.00}", vesselDryMass), GUILayout.ExpandWidth(true));
-				GUILayout.Label("Crew Capacity: " + vesselCrewCapacity, GUILayout.ExpandWidth(true));
-				GUILayout.Label("Part Count: " + vesselPartCount, GUILayout.ExpandWidth(true));
+				if (settings.get("showTotalMass", true)) GUILayout.Label("Total Mass: " + String.Format("{0:,0.00}", vesselTotalMass), GUILayout.ExpandWidth(true));
+				if (settings.get("showDryMass", true)) GUILayout.Label("Dry Mass: " + String.Format("{0:,0.00}", vesselDryMass), GUILayout.ExpandWidth(true));
+				if (settings.get("showCrewCapacity", true)) GUILayout.Label("Crew Capacity: " + vesselCrewCapacity, GUILayout.ExpandWidth(true));
+				if (settings.get("showPartCount", true)) GUILayout.Label("Part Count: " + vesselPartCount, GUILayout.ExpandWidth(true));
 				GUILayout.Space(10);
 				
 				foreach (String key in resourceList.Keys)
@@ -138,10 +159,12 @@ namespace ResourceOverview
 
 			GameEvents.onEditorShipModified.Remove(onEditorShipModified);
 			GameEvents.onPartRemove.Remove(onPartRemove);
-			
-			settings.set("x", (int)windowPosition.x);
-			settings.set("y", (int)windowPosition.y);
+
+			settings.set("ResourceWindow.x", (int)windowPosition.x);
+			settings.set("ResourceWindow.y", (int)windowPosition.y);
 			settings.save();
 		}
+
+		
 	}
 }
