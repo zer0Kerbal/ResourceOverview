@@ -23,9 +23,13 @@ namespace ResourceOverview
         public void Start()
         {
 			LogDebug("start");
+			Settings.load();
+
+			// TODO: add settingsChanged listener to add/remove toolbar/applauncher
+
 			roWindow = gameObject.AddComponent<ResourceWindow>();
 			
-            if (ToolbarManager.ToolbarAvailable) 
+            if (Settings.get("showToolbar", false) && ToolbarManager.ToolbarAvailable) 
             {
 				LogDebug("add toolbar button");
                 roButton = ToolbarManager.Instance.add("RO", "ROButton");
@@ -36,7 +40,7 @@ namespace ResourceOverview
 					roWindow.windowVisible = !roWindow.windowVisible;
                 };
             }
-            else
+            if(Settings.get("showAppLauncher", true))
             {
 				GameEvents.onGUIApplicationLauncherReady.Add(onGUIAppLauncherReady);
 				GameEvents.onGUIApplicationLauncherDestroyed.Add(onGUIAppLauncherDestroyed);
@@ -85,11 +89,11 @@ namespace ResourceOverview
 		{
 			LogDebug("destroy");
 		
-			if (ToolbarManager.ToolbarAvailable)
+			if (Settings.get("showToolbar", false) && ToolbarManager.ToolbarAvailable)
 			{
 				roButton.Destroy();
 			}
-			else
+			if (Settings.get("showAppLauncher", true))
 			{
 				if (appLauncherButton != null)
 				{
@@ -113,12 +117,12 @@ namespace ResourceOverview
 
 		private void onAppLaunchToggleOn()
 		{
-			roWindow.windowVisible = true;
+			roWindow.windowVisible = !roWindow.windowVisible;
 		}
 
 		private void onAppLaunchToggleOff()
 		{
-			roWindow.windowVisible = false;
+			roWindow.windowVisible = !roWindow.windowVisible;
 		}
 
 	}

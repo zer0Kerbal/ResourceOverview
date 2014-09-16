@@ -12,61 +12,52 @@ namespace ResourceOverview
 	{
 
 		public delegate void SettingsChangedEventHandler();
-		public event SettingsChangedEventHandler SettingsChanged;
+		public static event SettingsChangedEventHandler SettingsChanged;
 
-		protected PluginConfiguration cfg = null;
-		protected string prefix;
+		protected static PluginConfiguration cfg = PluginConfiguration.CreateForType<Settings>();
 
-		public Settings(string prefix)
-		{
-			cfg = PluginConfiguration.CreateForType<Settings>();
-			this.prefix = prefix;
-		}
-
-		public void load()
+		public static void load()
 		{
 			cfg.load();
 		}
 
-		public void save()
+		public static void save()
 		{
 			cfg.save();
-			LogDebug("saving settings for " + prefix);
-			if (this.SettingsChanged != null)
+			if (SettingsChanged != null)
 			{
-				LogDebug("calling settingschanged");
-				this.SettingsChanged();
+				SettingsChanged();
 			}
 		}
 
-		public object get(string name, object def)
+		public static object get(string name, object def)
 		{
-			return cfg.GetValue<object>(prefix+"."+name, def);
+			return cfg.GetValue<object>(name, def);
 		}
 
-		public string get(string name, string def)
+		public static string get(string name, string def)
 		{
-			return cfg.GetValue<string>(prefix + "." + name, def);
+			return cfg.GetValue<string>(name, def);
 		}
 
-		public int get(string name, int def)
+		public static int get(string name, int def)
 		{
-			return cfg.GetValue<int>(prefix + "." + name, def);
+			return cfg.GetValue<int>(name, def);
 		}
 
-		public float get(string name, float def)
+		public static float get(string name, float def)
 		{
-			return cfg.GetValue<float>(prefix + "." + name, def);
+			return cfg.GetValue<float>(name, def);
 		}
 
-		public bool get(string name, bool def)
+		public static bool get(string name, bool def)
 		{
-			return cfg.GetValue<bool>(prefix + "." + name, def);
+			return cfg.GetValue<bool>(name, def);
 		}
 
-		public void set(string name, object val)
+		public static void set(string name, object val)
 		{
-			cfg.SetValue(prefix + "." + name, val);
+			cfg.SetValue(name, val);
 		}
 		
 	}

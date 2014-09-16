@@ -8,14 +8,12 @@ namespace ResourceOverview
 {
 	class SettingsWindow : BaseWindow
 	{
-		public Settings settings;
-		protected bool showDryMass = true, showTotalMass = true, showCrewCapacity = true, showPartCount = true;
+		protected bool showDryMass = true, showTotalMass = true, showCrewCapacity = true, showPartCount = true, showToolbar = true, showAppLauncher = true;
 
 
-		public SettingsWindow(): base("Resource Overview Settings", 200, 150)
+		public SettingsWindow(): base("Resource Overview Settings", 200, 160)
 		{
-			settings = new Settings("ResourceOverview");
-			settings.load();
+			Settings.load();
 		}
 
 		public void Start()
@@ -23,13 +21,15 @@ namespace ResourceOverview
 			LogDebug("SettingsWindow start");
 			
 
-			showTotalMass = settings.get("showTotalMass", true);
-			showDryMass = settings.get("showDryMass", true);
-			showCrewCapacity = settings.get("showCrewCapacity", true);
-			showPartCount = settings.get("showPartCount", true);
+			showTotalMass = Settings.get("showTotalMass", true);
+			showDryMass = Settings.get("showDryMass", true);
+			showCrewCapacity = Settings.get("showCrewCapacity", true);
+			showPartCount = Settings.get("showPartCount", true);
+			showToolbar = Settings.get("showToolbar", false);
+			showAppLauncher = Settings.get("showAppLauncher", true);
 
-			windowPosition.x = settings.get("SettingsWindow.x", (int)(Screen.width / 2 - windowWidth / 2));
-			windowPosition.y = settings.get("SettingsWindow.y", (int)(Screen.height / 2 - windowHeight / 2));
+			windowPosition.x = Settings.get("SettingsWindow.x", (int)(Screen.width / 2 - windowWidth / 2));
+			windowPosition.y = Settings.get("SettingsWindow.y", (int)(Screen.height / 2 - windowHeight / 2));
 		}
 
 		protected override void preDrawGui()
@@ -44,6 +44,8 @@ namespace ResourceOverview
 			showDryMass = GUILayout.Toggle(showDryMass, "Show Dry Mass");
 			showCrewCapacity = GUILayout.Toggle(showCrewCapacity, "Show Crew Capacity");
 			showPartCount = GUILayout.Toggle(showPartCount, "Show Part Couht");
+			showToolbar = GUILayout.Toggle(showToolbar, "Enable Toolbar");
+			showAppLauncher = GUILayout.Toggle(showAppLauncher, "Enable AppLauncher (stock)");
 
 			GUILayout.BeginHorizontal();
 			if (GUILayout.Button("Save"))
@@ -67,15 +69,17 @@ namespace ResourceOverview
 
 		protected void saveSettings()
 		{
-			settings.set("showTotalMass", showTotalMass);
-			settings.set("showDryMass", showDryMass);
-			settings.set("showCrewCapacity", showCrewCapacity);
-			settings.set("showPartCount", showPartCount);
+			Settings.set("showTotalMass", showTotalMass);
+			Settings.set("showDryMass", showDryMass);
+			Settings.set("showCrewCapacity", showCrewCapacity);
+			Settings.set("showPartCount", showPartCount);
+			Settings.set("showToolbar", showToolbar);
+			Settings.set("showAppLauncher", showAppLauncher);
 
-			settings.set("SettingsWindow.x", (int)windowPosition.x);
-			settings.set("SettingsWindow.y", (int)windowPosition.y);
+			Settings.set("SettingsWindow.x", (int)windowPosition.x);
+			Settings.set("SettingsWindow.y", (int)windowPosition.y);
 
-			settings.save();
+			Settings.save();
 		}
 	}
 }
