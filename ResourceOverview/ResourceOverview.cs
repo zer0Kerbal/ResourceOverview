@@ -22,7 +22,7 @@ namespace ResourceOverview
 
         public void Start()
         {
-			LogDebug("start");
+			Log("start");
 			Settings.load();
 
 			// TODO: add settingsChanged listener to add/remove toolbar/applauncher
@@ -87,7 +87,7 @@ namespace ResourceOverview
 
 		void OnDestroy()
 		{
-			LogDebug("destroy");
+			Log("destroy");
 		
 			if (Settings.get("showToolbar", false) && ToolbarManager.ToolbarAvailable)
 			{
@@ -97,7 +97,7 @@ namespace ResourceOverview
 			{
 				if (appLauncherButton != null)
 				{
-					LogDebug("removing app launcher button from OnDestroy");
+					Log("removing app launcher button");
 					ApplicationLauncher.Instance.RemoveModApplication(appLauncherButton);
 				}
 				GameEvents.onGUIApplicationLauncherDestroyed.Remove(onGUIAppLauncherDestroyed);

@@ -13,7 +13,7 @@ namespace ResourceOverview
 
 		public SettingsWindow(): base("Resource Overview Settings", 200, 160)
 		{
-			Settings.load();
+
 		}
 
 		public void Start()
@@ -75,6 +75,8 @@ namespace ResourceOverview
 			Settings.set("showPartCount", showPartCount);
 			Settings.set("showToolbar", showToolbar);
 			Settings.set("showAppLauncher", showAppLauncher);
+
+			// TODO: error if toolbar AND applauncher disabled
 
 			Settings.set("SettingsWindow.x", (int)windowPosition.x);
 			Settings.set("SettingsWindow.y", (int)windowPosition.y);

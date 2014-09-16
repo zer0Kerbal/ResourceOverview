@@ -25,7 +25,7 @@ namespace ResourceOverview
 
 		public void Start()
 		{
-			LogDebug("window start");
+			Log("window start");
 			
 			
 			settingsWindow = gameObject.AddComponent<SettingsWindow>();
@@ -163,7 +163,7 @@ namespace ResourceOverview
 
 		void OnDestroy()
 		{
-			LogDebug("window destroy");
+			Log("window destroy");
 
 			GameEvents.onEditorShipModified.Remove(onEditorShipModified);
 			GameEvents.onPartRemove.Remove(onPartRemove);
