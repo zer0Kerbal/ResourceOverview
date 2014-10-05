@@ -43,7 +43,7 @@ namespace ResourceOverview
 			showTotalMass = GUILayout.Toggle(showTotalMass, "Show Total Mass");
 			showDryMass = GUILayout.Toggle(showDryMass, "Show Dry Mass");
 			showCrewCapacity = GUILayout.Toggle(showCrewCapacity, "Show Crew Capacity");
-			showPartCount = GUILayout.Toggle(showPartCount, "Show Part Couht");
+			showPartCount = GUILayout.Toggle(showPartCount, "Show Part Count");
 			showToolbar = GUILayout.Toggle(showToolbar, "Enable Toolbar");
 			showAppLauncher = GUILayout.Toggle(showAppLauncher, "Enable AppLauncher (stock)");
 
