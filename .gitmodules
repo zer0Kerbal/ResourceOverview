@@ -1,0 +1,3 @@
+[submodule "ResourceOverview/PluginBaseFramework"]
+	path = ResourceOverview/PluginBaseFramework
+	url = https://github.com/phwoelfel/PluginBaseFramework.git
