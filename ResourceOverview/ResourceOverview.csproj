@@ -52,15 +52,20 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BaseWindow.cs" />
-    <Compile Include="PluginBase.cs" />
     <Compile Include="DisplayResource.cs" />
+    <Compile Include="PluginBaseFramework\BaseWindow.cs" />
+    <Compile Include="PluginBaseFramework\PluginBase.cs" />
+    <Compile Include="PluginBaseFramework\KSPSettings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ResourceOverview.cs" />
     <Compile Include="ResourceWindow.cs" />
-    <Compile Include="Settings.cs" />
     <Compile Include="SettingsWindow.cs" />
     <Compile Include="ToolbarWrapper.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="PluginBaseFramework\.git" />
+    <None Include="PluginBaseFramework\LICENSE" />
+    <None Include="PluginBaseFramework\README.md" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="PostBuildMacros">
