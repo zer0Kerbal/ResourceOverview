@@ -1,4 +1,5 @@
-﻿﻿using System;
+﻿﻿using PluginBaseFramework;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -13,8 +14,6 @@ namespace ResourceOverview
     {
         private IButton roButton;
        
-		
-
 		private ApplicationLauncherButton appLauncherButton = null;
 
 
@@ -23,13 +22,13 @@ namespace ResourceOverview
         public void Start()
         {
 			Log("start");
-			Settings.load();
+			KSPSettings.load();
 
 			// TODO: add settingsChanged listener to add/remove toolbar/applauncher
 
 			roWindow = gameObject.AddComponent<ResourceWindow>();
 			
-            if (Settings.get("showToolbar", false) && ToolbarManager.ToolbarAvailable) 
+            if (KSPSettings.get("showToolbar", false) && ToolbarManager.ToolbarAvailable) 
             {
 				LogDebug("add toolbar button");
                 roButton = ToolbarManager.Instance.add("RO", "ROButton");
@@ -40,7 +39,7 @@ namespace ResourceOverview
 					roWindow.windowVisible = !roWindow.windowVisible;
                 };
             }
-            if(Settings.get("showAppLauncher", true))
+            if(KSPSettings.get("showAppLauncher", true))
             {
 				GameEvents.onGUIApplicationLauncherReady.Add(onGUIAppLauncherReady);
 				GameEvents.onGUIApplicationLauncherDestroyed.Add(onGUIAppLauncherDestroyed);
@@ -89,11 +88,11 @@ namespace ResourceOverview
 		{
 			Log("destroy");
 		
-			if (Settings.get("showToolbar", false) && ToolbarManager.ToolbarAvailable)
+			if (KSPSettings.get("showToolbar", false) && ToolbarManager.ToolbarAvailable)
 			{
 				roButton.Destroy();
 			}
-			if (Settings.get("showAppLauncher", true))
+			if (KSPSettings.get("showAppLauncher", true))
 			{
 				if (appLauncherButton != null)
 				{

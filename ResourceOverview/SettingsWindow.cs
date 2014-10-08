@@ -1,8 +1,10 @@
-﻿using System;
+﻿﻿using PluginBaseFramework;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
+
 
 namespace ResourceOverview
 {
@@ -21,15 +23,15 @@ namespace ResourceOverview
 			LogDebug("SettingsWindow start");
 			
 
-			showTotalMass = Settings.get("showTotalMass", true);
-			showDryMass = Settings.get("showDryMass", true);
-			showCrewCapacity = Settings.get("showCrewCapacity", true);
-			showPartCount = Settings.get("showPartCount", true);
-			showToolbar = Settings.get("showToolbar", false);
-			showAppLauncher = Settings.get("showAppLauncher", true);
+			showTotalMass = KSPSettings.get("showTotalMass", true);
+			showDryMass = KSPSettings.get("showDryMass", true);
+			showCrewCapacity = KSPSettings.get("showCrewCapacity", true);
+			showPartCount = KSPSettings.get("showPartCount", true);
+			showToolbar = KSPSettings.get("showToolbar", false);
+			showAppLauncher = KSPSettings.get("showAppLauncher", true);
 
-			windowPosition.x = Settings.get("SettingsWindow.x", (int)(Screen.width / 2 - windowWidth / 2));
-			windowPosition.y = Settings.get("SettingsWindow.y", (int)(Screen.height / 2 - windowHeight / 2));
+			windowPosition.x = KSPSettings.get("SettingsWindow.x", (int)(Screen.width / 2 - windowWidth / 2));
+			windowPosition.y = KSPSettings.get("SettingsWindow.y", (int)(Screen.height / 2 - windowHeight / 2));
 		}
 
 		protected override void preDrawGui()
@@ -69,19 +71,19 @@ namespace ResourceOverview
 
 		protected void saveSettings()
 		{
-			Settings.set("showTotalMass", showTotalMass);
-			Settings.set("showDryMass", showDryMass);
-			Settings.set("showCrewCapacity", showCrewCapacity);
-			Settings.set("showPartCount", showPartCount);
-			Settings.set("showToolbar", showToolbar);
-			Settings.set("showAppLauncher", showAppLauncher);
+			KSPSettings.set("showTotalMass", showTotalMass);
+			KSPSettings.set("showDryMass", showDryMass);
+			KSPSettings.set("showCrewCapacity", showCrewCapacity);
+			KSPSettings.set("showPartCount", showPartCount);
+			KSPSettings.set("showToolbar", showToolbar);
+			KSPSettings.set("showAppLauncher", showAppLauncher);
 
 			// TODO: error if toolbar AND applauncher disabled
 
-			Settings.set("SettingsWindow.x", (int)windowPosition.x);
-			Settings.set("SettingsWindow.y", (int)windowPosition.y);
+			KSPSettings.set("SettingsWindow.x", (int)windowPosition.x);
+			KSPSettings.set("SettingsWindow.y", (int)windowPosition.y);
 
-			Settings.save();
+			KSPSettings.save();
 		}
 	}
 }

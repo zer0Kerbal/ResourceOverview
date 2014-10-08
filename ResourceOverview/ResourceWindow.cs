@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
+﻿using PluginBaseFramework;
 
 namespace ResourceOverview
 {
@@ -29,19 +30,19 @@ namespace ResourceOverview
 			
 			
 			settingsWindow = gameObject.AddComponent<SettingsWindow>();
-			Settings.SettingsChanged += new Settings.SettingsChangedEventHandler(onSettingsChanged);
+			KSPSettings.SettingsChanged += new KSPSettings.SettingsChangedEventHandler(onSettingsChanged);
 
 
 			GameEvents.onEditorShipModified.Add(onEditorShipModified);
 			GameEvents.onPartRemove.Add(onPartRemove);
 
-			windowPosition.x = Settings.get("ResourceWindow.x", (int)(Screen.width / 2 - windowWidth / 2));
-			windowPosition.y = Settings.get("ResourceWindow.y", (int)(Screen.height / 2 - windowHeight / 2));
+			windowPosition.x = KSPSettings.get("ResourceWindow.x", (int)(Screen.width / 2 - windowWidth / 2));
+			windowPosition.y = KSPSettings.get("ResourceWindow.y", (int)(Screen.height / 2 - windowHeight / 2));
 		}
 
 		public void onSettingsChanged()
 		{
-			Settings.load();
+			KSPSettings.load();
 			LogDebug("onSettingsChanged");
 		}
 
@@ -112,18 +113,18 @@ namespace ResourceOverview
 			else // we got something, calculate size
 			{
 				windowHeight = 0;
-				if (Settings.get("showTotalMass", true)
-					|| Settings.get("showDryMass", true)
-					|| Settings.get("showCrewCapacity", true)
-					|| Settings.get("showPartCount", true))
+				if (KSPSettings.get("showTotalMass", true)
+					|| KSPSettings.get("showDryMass", true)
+					|| KSPSettings.get("showCrewCapacity", true)
+					|| KSPSettings.get("showPartCount", true))
 				{
 					windowHeight += 10; // add some space before resources
 				}
 
-				if (Settings.get("showTotalMass", true)) windowHeight += 20;
-				if (Settings.get("showDryMass", true)) windowHeight += 20;
-				if (Settings.get("showCrewCapacity", true)) windowHeight += 20;
-				if (Settings.get("showPartCount", true)) windowHeight += 20;
+				if (KSPSettings.get("showTotalMass", true)) windowHeight += 20;
+				if (KSPSettings.get("showDryMass", true)) windowHeight += 20;
+				if (KSPSettings.get("showCrewCapacity", true)) windowHeight += 20;
+				if (KSPSettings.get("showPartCount", true)) windowHeight += 20;
 
 				windowHeight += resourceList.Count * 20;
 			}
@@ -141,10 +142,10 @@ namespace ResourceOverview
 			if (EditorLogic.startPod != null)
 			{
 				reloadVesselData();
-				if (Settings.get("showTotalMass", true)) GUILayout.Label("Total Mass: " + String.Format("{0:,0.00}", vesselTotalMass), GUILayout.ExpandWidth(true));
-				if (Settings.get("showDryMass", true)) GUILayout.Label("Dry Mass: " + String.Format("{0:,0.00}", vesselDryMass), GUILayout.ExpandWidth(true));
-				if (Settings.get("showCrewCapacity", true)) GUILayout.Label("Crew Capacity: " + vesselCrewCapacity, GUILayout.ExpandWidth(true));
-				if (Settings.get("showPartCount", true)) GUILayout.Label("Part Count: " + vesselPartCount, GUILayout.ExpandWidth(true));
+				if (KSPSettings.get("showTotalMass", true)) GUILayout.Label("Total Mass: " + String.Format("{0:,0.00}", vesselTotalMass), GUILayout.ExpandWidth(true));
+				if (KSPSettings.get("showDryMass", true)) GUILayout.Label("Dry Mass: " + String.Format("{0:,0.00}", vesselDryMass), GUILayout.ExpandWidth(true));
+				if (KSPSettings.get("showCrewCapacity", true)) GUILayout.Label("Crew Capacity: " + vesselCrewCapacity, GUILayout.ExpandWidth(true));
+				if (KSPSettings.get("showPartCount", true)) GUILayout.Label("Part Count: " + vesselPartCount, GUILayout.ExpandWidth(true));
 				GUILayout.Space(10);
 				
 				foreach (String key in resourceList.Keys)
@@ -168,9 +169,9 @@ namespace ResourceOverview
 			GameEvents.onEditorShipModified.Remove(onEditorShipModified);
 			GameEvents.onPartRemove.Remove(onPartRemove);
 
-			Settings.set("ResourceWindow.x", (int)windowPosition.x);
-			Settings.set("ResourceWindow.y", (int)windowPosition.y);
-			Settings.save();
+			KSPSettings.set("ResourceWindow.x", (int)windowPosition.x);
+			KSPSettings.set("ResourceWindow.y", (int)windowPosition.y);
+			KSPSettings.save();
 		}
 
 		
