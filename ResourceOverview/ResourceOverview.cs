@@ -32,7 +32,7 @@ namespace ResourceOverview
             {
 				LogDebug("add toolbar button");
                 roButton = ToolbarManager.Instance.add("RO", "ROButton");
-                roButton.TexturePath = pluginPath + "/icons/ro_toolbar_button";
+                roButton.TexturePath = "ResourceOverview/icons/ro_toolbar_button";
                 roButton.ToolTip = "Resource Overview Window";
                 roButton.OnClick += (e) =>
                 {
@@ -71,7 +71,7 @@ namespace ResourceOverview
 					btnTexture.LoadImage(System.IO.File.ReadAllBytes(pluginPath + "/icons/ro_app_button.png"));
 				}
 				catch(Exception ex){
-					Log("Couldn't load texture for AppLauncher button: " +pluginPath +"/icons/ro_app_button.png")
+					Log("Couldn't load texture for AppLauncher button: " + pluginPath + "/icons/ro_app_button.png!\n" +ex.Message);
 				}
 
 				appLauncherButton = ApplicationLauncher.Instance.AddModApplication(
