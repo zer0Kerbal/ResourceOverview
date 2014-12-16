@@ -84,7 +84,7 @@
     <PostBuildEvent>rem Set the Variables we need
 set GamePath="C:\Games\Kerbal Space Program dev"
 set ReleaseDir=F:\philip\development\KSP\plugins\00_releases
-set ReleasePath=%25ReleaseDir%25\$(ProjectName)\$(ProjectName)_@(VersionNumber)
+set ReleasePath=%25ReleaseDir%25\$(ProjectName)\$(ProjectName)_@(VersionNumber)\$(ProjectName)
 set DebugPath="%25GamePath%25\GameData\$(ProjectName)"
 set Binary="%25GamePath%25\KSP.exe"
 set ZipScript="F:\philip\development\zip.vbs"
