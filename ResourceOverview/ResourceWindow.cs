@@ -15,6 +15,7 @@ namespace ResourceOverview
 		private float vesselTotalMass;
 		private float vesselDryMass;
 		private float vesselTWR;
+		private float vesselMaxThrust;
 		private int vesselCrewCapacity;
 		private int vesselPartCount;
 
@@ -83,6 +84,20 @@ namespace ResourceOverview
 			vesselCrewCapacity = EditorLogic.SortedShipList.Sum(p => p.CrewCapacity);
 			vesselPartCount = EditorLogic.SortedShipList.Count;
 
+			// thanks to mechjeb for this part:
+			var engines = (from part in EditorLogic.fetch.ship.parts
+						   where part.inverseStage == Staging.lastStage
+						   from engine in part.Modules.OfType<ModuleEngines>()
+						   select engine);
+			var enginesfx = (from part in EditorLogic.fetch.ship.parts
+							 where part.inverseStage == Staging.lastStage
+							 from engine in part.Modules.OfType<ModuleEnginesFX>()
+							 where engine.isEnabled
+							 select engine);
+			vesselMaxThrust = engines.Sum(e => e.thrustPercentage / 100f * e.maxThrust) + enginesfx.Sum(e => e.thrustPercentage / 100f * e.maxThrust);
+
+			vesselTWR = (vesselMaxThrust / vesselTotalMass) / (float)9.81;
+
 			foreach (Part part in EditorLogic.SortedShipList)
 			{
 				foreach (PartResource res in part.Resources.list)
@@ -149,7 +164,7 @@ namespace ResourceOverview
 				if (KSPSettings.get("showDryMass", true)) GUILayout.Label("Dry Mass: " + String.Format("{0:,0.00}", vesselDryMass), GUILayout.ExpandWidth(true));
 				if (KSPSettings.get("showCrewCapacity", true)) GUILayout.Label("Crew Capacity: " + vesselCrewCapacity, GUILayout.ExpandWidth(true));
 				if (KSPSettings.get("showPartCount", true)) GUILayout.Label("Part Count: " + vesselPartCount, GUILayout.ExpandWidth(true));
-				if (KSPSettings.get("showTWR", true)) GUILayout.Label("TWR: " + vesselPartCount, GUILayout.ExpandWidth(true));
+				if (KSPSettings.get("showTWR", true)) GUILayout.Label("TWR: " + String.Format("{0:,0.00}", vesselTWR), GUILayout.ExpandWidth(true));
 				GUILayout.Space(10);
 				
 				foreach (String key in resourceList.Keys)

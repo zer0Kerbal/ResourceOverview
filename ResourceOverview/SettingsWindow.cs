@@ -10,7 +10,7 @@ namespace ResourceOverview
 {
 	class SettingsWindow : BaseWindow
 	{
-		protected bool showDryMass = true, showTotalMass = true, showCrewCapacity = true, showPartCount = true, showToolbar = true, showAppLauncher = true;
+		protected bool showDryMass = true, showTotalMass = true, showCrewCapacity = true, showPartCount = true, showTWR = false, showToolbar = true, showAppLauncher = true;
 
 
 		public SettingsWindow(): base("Resource Overview Settings", 200, 160)
@@ -27,6 +27,7 @@ namespace ResourceOverview
 			showDryMass = KSPSettings.get("showDryMass", true);
 			showCrewCapacity = KSPSettings.get("showCrewCapacity", true);
 			showPartCount = KSPSettings.get("showPartCount", true);
+			showTWR = KSPSettings.get("showTWR", false);
 			showToolbar = KSPSettings.get("showToolbar", false);
 			showAppLauncher = KSPSettings.get("showAppLauncher", true);
 
@@ -46,6 +47,7 @@ namespace ResourceOverview
 			showDryMass = GUILayout.Toggle(showDryMass, "Show Dry Mass");
 			showCrewCapacity = GUILayout.Toggle(showCrewCapacity, "Show Crew Capacity");
 			showPartCount = GUILayout.Toggle(showPartCount, "Show Part Count");
+			showTWR = GUILayout.Toggle(showTWR, "Show TWR");
 			showToolbar = GUILayout.Toggle(showToolbar, "Enable Toolbar");
 			showAppLauncher = GUILayout.Toggle(showAppLauncher, "Enable AppLauncher (stock)");
 
@@ -75,6 +77,7 @@ namespace ResourceOverview
 			KSPSettings.set("showDryMass", showDryMass);
 			KSPSettings.set("showCrewCapacity", showCrewCapacity);
 			KSPSettings.set("showPartCount", showPartCount);
+			KSPSettings.set("showTWR", showTWR);
 			KSPSettings.set("showToolbar", showToolbar);
 			KSPSettings.set("showAppLauncher", showAppLauncher);
 
