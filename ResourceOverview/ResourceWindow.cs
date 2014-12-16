@@ -14,6 +14,7 @@ namespace ResourceOverview
 		public bool vesselDataFetched = false;
 		private float vesselTotalMass;
 		private float vesselDryMass;
+		private float vesselTWR;
 		private int vesselCrewCapacity;
 		private int vesselPartCount;
 
@@ -116,7 +117,8 @@ namespace ResourceOverview
 				if (KSPSettings.get("showTotalMass", true)
 					|| KSPSettings.get("showDryMass", true)
 					|| KSPSettings.get("showCrewCapacity", true)
-					|| KSPSettings.get("showPartCount", true))
+					|| KSPSettings.get("showPartCount", true)
+					|| KSPSettings.get("showTWR", true))
 				{
 					windowHeight += 10; // add some space before resources
 				}
@@ -125,6 +127,7 @@ namespace ResourceOverview
 				if (KSPSettings.get("showDryMass", true)) windowHeight += 20;
 				if (KSPSettings.get("showCrewCapacity", true)) windowHeight += 20;
 				if (KSPSettings.get("showPartCount", true)) windowHeight += 20;
+				if (KSPSettings.get("showTWR", true)) windowHeight += 20;
 
 				windowHeight += resourceList.Count * 20;
 			}
@@ -146,6 +149,7 @@ namespace ResourceOverview
 				if (KSPSettings.get("showDryMass", true)) GUILayout.Label("Dry Mass: " + String.Format("{0:,0.00}", vesselDryMass), GUILayout.ExpandWidth(true));
 				if (KSPSettings.get("showCrewCapacity", true)) GUILayout.Label("Crew Capacity: " + vesselCrewCapacity, GUILayout.ExpandWidth(true));
 				if (KSPSettings.get("showPartCount", true)) GUILayout.Label("Part Count: " + vesselPartCount, GUILayout.ExpandWidth(true));
+				if (KSPSettings.get("showTWR", true)) GUILayout.Label("TWR: " + vesselPartCount, GUILayout.ExpandWidth(true));
 				GUILayout.Space(10);
 				
 				foreach (String key in resourceList.Keys)
