@@ -94,7 +94,7 @@ namespace ResourceOverview
 					}
 					else
 					{
-						resourceList.Add(res.resourceName, new DisplayResource(res.resourceName, res.amount, res.maxAmount));
+						resourceList.Add(res.resourceName, new DisplayResource(res.resourceName, res.amount, res.maxAmount, res.info.density));
 					}
 				}
 			}
@@ -106,7 +106,7 @@ namespace ResourceOverview
 
 		protected override void preDrawGui()
 		{
-			if (EditorLogic.startPod == null) // nothing to display, show only text
+			if (EditorLogic.RootPart == null) // nothing to display, show only text
 			{
 				windowHeight = 50;
 			}
@@ -139,7 +139,7 @@ namespace ResourceOverview
 			
 			GUILayout.BeginVertical();
 
-			if (EditorLogic.startPod != null)
+			if (EditorLogic.RootPart != null)
 			{
 				reloadVesselData();
 				if (KSPSettings.get("showTotalMass", true)) GUILayout.Label("Total Mass: " + String.Format("{0:,0.00}", vesselTotalMass), GUILayout.ExpandWidth(true));

@@ -11,12 +11,14 @@ namespace ResourceOverview
 		public double amount;
 		public double maxAmount;
 		public string name;
+		public float density;
 
-		public DisplayResource(string name, double amount, double maxAmount)
+		public DisplayResource(string name, double amount, double maxAmount, float density)
 		{
 			this.name = name;
 			this.amount = amount;
 			this.maxAmount = maxAmount;
+			this.density = density;
 		}
 	}
 }
