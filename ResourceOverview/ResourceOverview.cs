@@ -1,133 +1,76 @@
-﻿﻿using PluginBaseFramework;
+﻿using PluginBaseFramework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using UnityEngine;
+using KSP.IO;
+using KSP.UI.Screens;
+using ToolbarControl_NS;
+using static ResourceOverview.RegisterToolbar;
 
 namespace ResourceOverview
 {
 
-	[KSPAddon(KSPAddon.Startup.EditorAny, false)]
-    class ResourceOverview : PluginBase
+    [KSPAddon(KSPAddon.Startup.FlightAndEditor, false)]
+    partial class ResourceOverview : BaseWindow
     {
-        private IButton roButton;
-		private ApplicationLauncherButton appLauncherButton = null;
-		
-		private ResourceWindow roWindow;
-		
-		private String pluginPath = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+        internal static ResourceOverview Instance;
+        private static ToolbarControl toolbarControl = null;
+
+        internal const string MODID = "ResourceOveriew";
+        internal const string MODNAME = "Resource Overiew";
+
 
         public void Start()
         {
-			Log("start");
-			KSPSettings.load();
+            Log.Info("Start");
+            Instance = this;
 
-			// TODO: add settingsChanged listener to add/remove toolbar/applauncher
+            if (toolbarControl == null)
+            {
+                Log.Info("Initting toolbarControl");
+                toolbarControl = gameObject.AddComponent<ToolbarControl>();
+                toolbarControl.AddToAllToolbars(
+                    onAppLaunchToggle, onAppLaunchToggle,
+                    onAppLaunchHoverOn, onAppLaunchHoverOff,
+                    null, null,
+                    ApplicationLauncher.AppScenes.SPH | ApplicationLauncher.AppScenes.VAB | ApplicationLauncher.AppScenes.FLIGHT,
+                    MODID,
+                    "RO_Btn",
+                    "ResourceOverview/PluginData/ro_app_button_active.png",
+                    "ResourceOverview/PluginData/ro_app_button.png",
+                    "ResourceOverview/PluginData/ro_toolbar_button_active",
+                    "ResourceOverview/PluginData/ro_toolbar_button",
+                    MODNAME);
+            }
 
-			roWindow = gameObject.AddComponent<ResourceWindow>();
-			
-            if (KSPSettings.get("showToolbar", false) && ToolbarManager.ToolbarAvailable) 
+            KSPSettings.load();
+            KSPSettings.SettingsChanged += new KSPSettings.SettingsChangedEventHandler(onSettingsChanged);
+
+            GameEvents.onPartRemove.Add(onPartRemove);
+            if (HighLogic.LoadedSceneIsEditor)
             {
-				LogDebug("add toolbar button");
-                roButton = ToolbarManager.Instance.add("RO", "ROButton");
-                roButton.TexturePath = "ResourceOverview/icons/ro_toolbar_button";
-                roButton.ToolTip = "Resource Overview Window";
-                roButton.OnClick += (e) =>
-                {
-					roWindow.windowVisible = !roWindow.windowVisible;
-                };
+                GameEvents.onEditorShipModified.Add(onEditorShipModified);
             }
-            if(KSPSettings.get("showAppLauncher", true))
-            {
-				GameEvents.onGUIApplicationLauncherReady.Add(onGUIAppLauncherReady);
-				GameEvents.onGUIApplicationLauncherDestroyed.Add(onGUIAppLauncherDestroyed);
-            }
-			
+            if (HighLogic.LoadedSceneIsFlight)
+                SetUpUpdateCoroutine();
         }
 
+        private void onAppLaunchHoverOn()
+        {
+            windowHover = true;
+        }
 
+        private void onAppLaunchHoverOff()
+        {
+            windowHover = false;
+        }
 
-		private void onGUIAppLauncherDestroyed()
-		{
-			LogDebug("onGUIAppLauncherDestroyed");
-			if (appLauncherButton != null)
-			{
-				LogDebug("removing app launcher button from onGUIAppLauncherDestroyed");
-				ApplicationLauncher.Instance.RemoveModApplication(appLauncherButton); 
-			}
-		}
-
-
-		private void onGUIAppLauncherReady()
-		{
-			LogDebug("onGUIAppLauncherReady");
-			if (appLauncherButton == null)
-			{
-				LogDebug("onGUIAppLauncherReady adding button");
-				Texture2D btnTexture = new Texture2D(38, 38);
-				try{
-					btnTexture.LoadImage(System.IO.File.ReadAllBytes(pluginPath + "/icons/ro_app_button.png"));
-				}
-				catch(Exception ex){
-					Log("Couldn't load texture for AppLauncher button: " + pluginPath + "/icons/ro_app_button.png!\n" +ex.Message);
-				}
-
-				appLauncherButton = ApplicationLauncher.Instance.AddModApplication(
-					onAppLaunchToggleOn, onAppLaunchToggleOff,
-					onAppLaunchHoverOn, onAppLaunchHoverOff,
-					null, null,
-					ApplicationLauncher.AppScenes.SPH | ApplicationLauncher.AppScenes.VAB,
-					(Texture)btnTexture);
-			}
-		}
-
-
-		public void Update()
-		{
-
-		}
-
-		void OnDestroy()
-		{
-			Log("destroy");
-		
-			if (KSPSettings.get("showToolbar", false) && ToolbarManager.ToolbarAvailable)
-			{
-				roButton.Destroy();
-			}
-			if (KSPSettings.get("showAppLauncher", true))
-			{
-				if (appLauncherButton != null)
-				{
-					Log("removing app launcher button");
-					ApplicationLauncher.Instance.RemoveModApplication(appLauncherButton);
-				}
-				GameEvents.onGUIApplicationLauncherDestroyed.Remove(onGUIAppLauncherDestroyed);
-				GameEvents.onGUIApplicationLauncherReady.Remove(onGUIAppLauncherReady);
-			}
-		}
-
-		private void onAppLaunchHoverOn()
-		{
-			roWindow.windowHover = true;
-		}
-
-		private void onAppLaunchHoverOff()
-		{
-			roWindow.windowHover = false;
-		}
-
-		private void onAppLaunchToggleOn()
-		{
-			roWindow.windowVisible = !roWindow.windowVisible;
-		}
-
-		private void onAppLaunchToggleOff()
-		{
-			roWindow.windowVisible = !roWindow.windowVisible;
-		}
-
-	}
+        private void onAppLaunchToggle()
+        {
+            windowVisible = !windowVisible;
+        }
+    }
 }
