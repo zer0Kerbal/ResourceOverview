@@ -40,15 +40,15 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="KSP_Log">
-      <HintPath>$(KSPDIR\GameData\SpaceTuxLibrary\Plugins\KSP_Log.dll</HintPath>
+      <HintPath>$(KSPDIR)\GameData\SpaceTuxLibrary\Plugins\KSP_Log.dll</HintPath>
     </Reference>
     <Reference Include="SpaceTuxUtility, Version=1.0.1.3, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>$(KSPDIR\GameData\SpaceTuxLibrary\Plugins\SpaceTuxUtility.dll</HintPath>
+      <HintPath>$(KSPDIR)\GameData\SpaceTuxLibrary\Plugins\SpaceTuxUtility.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="ToolbarControl">
-      <HintPath>$(KSPDIR\GameData\001_ToolbarControl\Plugins\ToolbarControl.dll</HintPath>
+      <HintPath>$(KSPDIR)\GameData\001_ToolbarControl\Plugins\ToolbarControl.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -67,10 +67,6 @@
     <Compile Include="ResourceOverview.cs" />
     <Compile Include="ResourceWindow.cs" />
     <Compile Include="SettingsWindow.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="PluginBaseFramework\LICENSE" />
-    <None Include="PluginBaseFramework\README.md" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="AssemblyVersion.tt">
