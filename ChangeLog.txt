@@ -1,0 +1,22 @@
+ChangeLog
+
+2.0.0
+	Adoption by Linuxgurugamer
+	Updated for 1.12.3
+	Added toolbarController
+	Added InstallChecker
+	Added AssemblyVersion.tt
+	Added functionality in flight scene
+	Changed saving of settings to PluginData
+	Moved icons into PluginData
+	Changed logging to using Log class from SpaceTuxLibrary
+	Removed settings for which toolbar to put button(s) on (replaced by ToolbarController)
+	Removed all references to old Blizzy toolbar (saved about 1000 lines of code)
+	Made buttons have green color when window is set to stay open
+
+	Note:  The button on the stock toolbar and on the Blizzy toolbar are not aware of each other, and the color can get out of sync if you use both of them
+
+	New Dependencies
+		SpaceTuxLibrary
+		ToolbarController
+		ClickThroughBlocker
